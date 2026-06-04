@@ -1,0 +1,23 @@
+{
+  "name": "k6-intermediate-example",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/fauzigalih/k6-intermediate-example#readme",
+  "bugs": {
+    "url": "https://github.com/fauzigalih/k6-intermediate-example/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fauzigalih/k6-intermediate-example.git"
+  },
+  "license": "ISC",
+  "author": "Fauzi Galih",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/k6": "^2.0.0"
+  }
+}
