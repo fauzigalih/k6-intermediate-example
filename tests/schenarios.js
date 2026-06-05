@@ -4,11 +4,34 @@ import { getPost, getAllPost, createPost } from '../helpers/post.js';
 import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js';
 
 export const options = {
-  vus: 5,
-  duration: '5s',
+  thresholds: {
+    http_req_failed: ['rate<0.05'], // http errors should be less than 5%
+    http_req_duration: ['p(95)<1500'], // 95% of requests should be below 1500ms
+    http_reqs: ['rate>0.95'] // http success should be more than 95%
+  },
+  scenarios: {
+    schenarioGetPost: {
+      executor: 'constant-vus',
+      exec: 'schenarioGetPost',
+      vus: 5,
+      duration: '5s',
+    },
+    schenarioGetAllPost: {
+      executor: 'constant-vus',
+      exec: 'schenarioGetAllPost',
+      vus: 5,
+      duration: '5s',
+    },
+    schenarioCreatePost: {
+      executor: 'constant-vus',
+      exec: 'schenarioCreatePost',
+      vus: 5,
+      duration: '5s',
+    },
+  },
 };
 
-export default function() {
+export function schenarioGetPost() {
   const responsePost =  getPost();
   check(responsePost, {
     'response post is status 200': (res) => res.status === 200,
@@ -16,7 +39,10 @@ export default function() {
       res.body.includes('sunt aut facere repellat provident occaecati excepturi optio reprehenderit'),
     'response post time < 2000ms': (res) => res.timings.duration < 2000,
   });
+  sleep(1);
+}
 
+export function schenarioGetAllPost() {
   const responseAllPost = getAllPost();
   check(responseAllPost, {
     'response all post is status 200': (res) => res.status === 200,
@@ -24,7 +50,10 @@ export default function() {
       res.body.includes('qui est esse'),
     'response all post time < 2000ms': (res) => res.timings.duration < 2000,
   });
+  sleep(1);
+}
 
+export function schenarioCreatePost() {  
   const responseCreatePost = createPost({
     title: `title-${uuidv4()}`,
     body: `bar-${uuidv4()}`,
@@ -40,6 +69,6 @@ export default function() {
 
 export function handleSummary(data) {
   return {
-    'results/checks.json': JSON.stringify(data), //the default data object
+    'results/schenarios.json': JSON.stringify(data), //the default data object
   };
 }

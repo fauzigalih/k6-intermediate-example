@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { sleep, check } from 'k6';
-import { getAllUsers, createUser, getUser } from '../helpers/user.js';
+import { getPost, getAllPost, createPost } from '../helpers/post.js';
 import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js';
 
 export const options = {
@@ -12,10 +12,18 @@ stages: [
 };
 
 export default function() {
-  getAllUsers();
-  createUser({
-    "email": `user-${uuidv4()}`,
-    "password": "secret"
+  getPost();
+  getAllPost();
+  createPost({
+    title: `title-${uuidv4()}`,
+    body: `bar-${uuidv4()}`,
+    userId: 1,
   });
-  getUser();
+  sleep(1);
+}
+
+export function handleSummary(data) {
+  return {
+    'results/stages.json': JSON.stringify(data), //the default data object
+  };
 }
