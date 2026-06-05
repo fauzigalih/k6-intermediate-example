@@ -7,53 +7,52 @@ export const options = {
   thresholds: {
     http_req_failed: ['rate<0.05'], // http errors should be less than 5%
     http_req_duration: ['p(95)<1500'], // 95% of requests should be below 1500ms
-    http_reqs: ['rate>0.95'] // http success should be more than 95%
+    checks: ['rate>0.95'] // http success should be more than 95%
   },
   scenarios: {
-    schenarioGetPost: {
+    scenarioGetPost: {
       executor: 'constant-vus',
-      exec: 'schenarioGetPost',
+      exec: 'scenarioGetPost',
       vus: 5,
       duration: '5s',
     },
-    schenarioGetAllPost: {
+    scenarioGetAllPost: {
       executor: 'constant-vus',
-      exec: 'schenarioGetAllPost',
+      exec: 'scenarioGetAllPost',
       vus: 5,
       duration: '5s',
     },
-    schenarioCreatePost: {
+    scenarioCreatePost: {
       executor: 'constant-vus',
-      exec: 'schenarioCreatePost',
+      exec: 'scenarioCreatePost',
       vus: 5,
       duration: '5s',
     },
   },
 };
 
-export function schenarioGetPost() {
+export function scenarioGetPost() {
   const responsePost =  getPost();
   check(responsePost, {
     'response post is status 200': (res) => res.status === 200,
-    'response post verify title': (res) => 
-      res.body.includes('sunt aut facere repellat provident occaecati excepturi optio reprehenderit'),
+    'response post has title field': (res) => JSON.parse(res.body).hasOwnProperty('title'),
+    'response post has userId not undefined': (res) => JSON.parse(res.body).userId !== undefined,
     'response post time < 2000ms': (res) => res.timings.duration < 2000,
   });
   sleep(1);
 }
 
-export function schenarioGetAllPost() {
+export function scenarioGetAllPost() {
   const responseAllPost = getAllPost();
   check(responseAllPost, {
     'response all post is status 200': (res) => res.status === 200,
-    'response all post verify title': (res) => 
-      res.body.includes('qui est esse'),
+    'response all post all fields exist': (res) => res.json().every(items => ['userId', 'id', 'title', 'body'].every(key => key in items)),
     'response all post time < 2000ms': (res) => res.timings.duration < 2000,
   });
   sleep(1);
 }
 
-export function schenarioCreatePost() {  
+export function scenarioCreatePost() {  
   const responseCreatePost = createPost({
     title: `title-${uuidv4()}`,
     body: `bar-${uuidv4()}`,
@@ -69,6 +68,6 @@ export function schenarioCreatePost() {
 
 export function handleSummary(data) {
   return {
-    'results/schenarios.json': JSON.stringify(data), //the default data object
+    'results/scenarios.json': JSON.stringify(data), //the default data object
   };
 }

@@ -12,16 +12,15 @@ export default function() {
   const responsePost =  getPost();
   check(responsePost, {
     'response post is status 200': (res) => res.status === 200,
-    'response post verify title': (res) => 
-      res.body.includes('sunt aut facere repellat provident occaecati excepturi optio reprehenderit'),
+    'response post has title field': (res) => JSON.parse(res.body).hasOwnProperty('title'),
+    'response post has userId not undefined': (res) => JSON.parse(res.body).userId !== undefined,
     'response post time < 2000ms': (res) => res.timings.duration < 2000,
   });
 
   const responseAllPost = getAllPost();
   check(responseAllPost, {
     'response all post is status 200': (res) => res.status === 200,
-    'response all post verify title': (res) => 
-      res.body.includes('qui est esse'),
+    'response all post all fields exist': (res) => res.json().every(items => ['userId', 'id', 'title', 'body'].every(key => key in items)),
     'response all post time < 2000ms': (res) => res.timings.duration < 2000,
   });
 

@@ -1,5 +1,4 @@
 import http from 'k6/http';
-import { sleep, check } from 'k6';
 
 export function getPost() {
   return http.get('https://jsonplaceholder.typicode.com/posts/1');

@@ -9,38 +9,37 @@ export const options = {
   thresholds: {
     http_req_failed: ['rate<0.05'], // http errors should be less than 5%
     http_req_duration: ['p(95)<1500'], // 95% of requests should be below 1500ms
-    http_reqs: ['rate>0.95'] // http success should be more than 95%
+    checks: ['rate>0.95'] // http success should be more than 95%
   },
 };
 
 export default function() {
   const responsePost =  getPost();
-    check(responsePost, {
-      'response post is status 200': (res) => res.status === 200,
-      'response post verify title': (res) => 
-        res.body.includes('sunt aut facere repellat provident occaecati excepturi optio reprehenderit'),
-      'response post time < 2000ms': (res) => res.timings.duration < 2000,
-    });
-  
-    const responseAllPost = getAllPost();
-    check(responseAllPost, {
-      'response all post is status 200': (res) => res.status === 200,
-      'response all post verify title': (res) => 
-        res.body.includes('qui est esse'),
-      'response all post time < 2000ms': (res) => res.timings.duration < 2000,
-    });
-  
-    const responseCreatePost = createPost({
-      title: `title-${uuidv4()}`,
-      body: `bar-${uuidv4()}`,
-      userId: 1,
-    });
-    check(responseCreatePost, {
-      'response create post is status 201': (res) => res.status === 201,
-      'response create post verify id': (res) => res.body.includes('101'),
-      'response create post time < 2000ms': (res) => res.timings.duration < 2000,
-    });
-    sleep(1);
+  check(responsePost, {
+    'response post is status 200': (res) => res.status === 200,
+    'response post has title field': (res) => JSON.parse(res.body).hasOwnProperty('title'),
+    'response post has userId not undefined': (res) => JSON.parse(res.body).userId !== undefined,
+    'response post time < 2000ms': (res) => res.timings.duration < 2000,
+  });
+
+  const responseAllPost = getAllPost();
+  check(responseAllPost, {
+    'response all post is status 200': (res) => res.status === 200,
+    'response all post all fields exist': (res) => res.json().every(items => ['userId', 'id', 'title', 'body'].every(key => key in items)),
+    'response all post time < 2000ms': (res) => res.timings.duration < 2000,
+  });
+
+  const responseCreatePost = createPost({
+    title: `title-${uuidv4()}`,
+    body: `bar-${uuidv4()}`,
+    userId: 1,
+  });
+  check(responseCreatePost, {
+    'response create post is status 201': (res) => res.status === 201,
+    'response create post verify id': (res) => res.body.includes('101'),
+    'response create post time < 2000ms': (res) => res.timings.duration < 2000,
+  });
+  sleep(1);
 }
 
 export function handleSummary(data) {
