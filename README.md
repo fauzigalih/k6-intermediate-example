@@ -93,7 +93,7 @@ Contoh file hasil:
 results/stages.json
 results/checks.json
 results/thresholds.json
-results/schenarios.json
+results/scenarios.json
 ```
 
 ---
@@ -105,6 +105,47 @@ results/schenarios.json
 * Simpan seluruh hasil testing pada folder `results`.
 * Pisahkan test berdasarkan fitur atau endpoint API.
 * Jalankan satu per satu test pada folder `tests`.
+
+---
+
+## Task Description
+
+### 1. Stages — simulasi traffic realistis
+Buat load test dengan 3 stage: ramp-up, sustained load, ramp-down. Jangan flat load.
+
+* Ramp up ke 20 VU dalam 30 detik
+* Tahan 20 VU selama 1 menit
+* Ramp down ke 0 dalam 20 detik
+
+`stages` `VU ramp`
+
+### 2. Checks — validasi response
+Setiap request harus divalidasi, bukan hanya dijalankan. Test dianggap gagal kalau check rate di bawah 95%.
+
+* Status code sesuai (200, 201, dll)
+* Response body mengandung field yang diharapkan
+* Response time di bawah 2000ms
+
+`check()` `response validation`
+
+### 3. Thresholds — batas kelulusan otomatis
+Test harus otomatis FAIL jika performa tidak memenuhi standar berikut.
+
+* p95 response time < 1500ms
+* Error rate < 5%
+* Check success rate > 95%
+
+`thresholds` `p95` `http_req_failed`
+
+### 4. Multiple scenarios — pisahkan test per endpoint
+
+Buat minimal 2 scenario berbeda yang berjalan bersamaan: satu untuk GET, satu untuk POST.
+
+* Scenario "get_post" → GET /api/users
+* Scenario "create_post" → POST /api/users
+* Setiap scenario punya executor dan load profile sendiri
+
+`scenarios` `executors`
 
 ---
 
