@@ -141,8 +141,8 @@ Test harus otomatis FAIL jika performa tidak memenuhi standar berikut.
 
 Buat minimal 2 scenario berbeda yang berjalan bersamaan: satu untuk GET, satu untuk POST.
 
-* Scenario "get_post" → GET /api/users
-* Scenario "create_post" → POST /api/users
+* Scenario "get_post" → GET /api/post/1
+* Scenario "create_post" → POST /api/post
 * Setiap scenario punya executor dan load profile sendiri
 
 `scenarios` `executors`
